@@ -1,957 +1,770 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>神经网络热力学定律（动画演示 - 精致风格）</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <title>勾股定理、欧拉公式与宇宙奥秘：一场物理逻辑的思辨之旅</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --color-bg: #f4f7f9; /* 更轻盈的背景色 */
-            --color-surface: #ffffff; /* 内容区块背景 */
-            --color-text-primary: #34495e; /* 主要文字颜色 - 深蓝灰色 */
-            --color-text-secondary: #7f8c8d; /* 次要文字颜色 - 灰色 */
-            --color-heading: #2c3e50; /* 标题颜色 - 更深的蓝灰色 */
-            --color-accent: #3498db; /* 主题强调色 - 清澈蓝 */
-            --color-accent-dark: #2980b9; /* 主题强调色深色 */
-            --color-highlight: #e74c3c; /* 突出显示颜色 - 红色 */
-            --color-border: #e0e5e9; /* 边框颜色 */
-            --color-button-bg: var(--color-accent);
-            --color-button-text: #ffffff;
-            --color-formula-bg: #ecf0f1; /* 公式背景 - 浅灰色 */
-            --color-formula-text: var(--color-heading);
-
-            --font-primary: 'LXGW WenKai Lite', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            --font-headings: 'LXGW WenKai Lite', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            
-            --shadow-soft: 0 4px 12px rgba(0,0,0,0.06); /* 更柔和的阴影 */
-            --shadow-medium: 0 8px 20px rgba(0,0,0,0.08); /* 中等阴影 */
-            --border-radius-small: 6px;
-            --border-radius-medium: 10px;
-        }
-
-        *, *::after, *::before { box-sizing: border-box; }
+        /* 基本重置和页面设置 */
         body {
-            font-family: var(--font-primary);
-            font-size: 16pt; /* 三号字 */
-            line-height: 1.85; /* 调整行高以提高可读性 */
-            color: var(--color-text-primary);
-            background-color: var(--color-bg);
             margin: 0;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            padding-top: 20px; /* 给顶部一些空间 */
-            padding-bottom: 20px; /* 给底部一些空间 */
-        }
-        a { text-decoration: none; color: var(--color-accent); outline: none; transition: color 0.2s ease-in-out; }
-        a:hover, a:focus { color: var(--color-accent-dark); outline: none; }
-
-        .page-wrapper {
-            max-width: 1140px; /* 稍宽一点的内容区域 */
-            margin: 0 auto;
-            padding: 0 20px; /* 左右留白 */
-        }
-        
-        .content-section {
-            background-color: var(--color-surface);
-            margin: 40px 0; /* 增加区块间距 */
-            padding: 45px 55px; /* 调整内边距 */
-            border-radius: var(--border-radius-medium);
-            box-shadow: var(--shadow-medium);
-            text-align: left;
-            border: 1px solid var(--color-border); /* 添加细边框 */
+            padding: 0;
+            font-family: 'Noto Sans SC', sans-serif; /* 清晰的正文 */
+            font-size: 18px; /* 模拟“三号”字体大小，提供良好可读性 */
+            line-height: 1.8;
+            background-color: #f8f9fa; /* 淡雅背景色 */
+            color: #343a40; /* 深灰文字，对比清晰 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .content-section__title { /* H1 */
-            font-family: var(--font-headings);
-            font-size: 2.4em; /* 调整标题大小 */
-            color: var(--color-heading);
-            margin: 0 0 0.8em;
-            font-weight: 700; /* 加粗 */
-            text-align: center;
-            padding-bottom: 0.6em;
-            border-bottom: 3px solid var(--color-accent); /* 使用强调色作为下划线 */
-        }
-        
-        .content-section__subtitle { /* H2 */
-            font-family: var(--font-headings);
-            font-size: 1.8em; /* 调整副标题大小 */
-            color: var(--color-heading);
-            margin: 2em 0 1em;
-            font-weight: 600;
-            border-left: 6px solid var(--color-accent);
-            padding-left: 18px;
-            line-height: 1.4; /* 优化标题行高 */
-        }
-
-        .content-section__sub-subtitle { /* H3 */
-            font-family: var(--font-headings);
-            font-size: 1.4em; /* 调整小标题大小 */
-            color: var(--color-accent-dark); /* 使用深强调色 */
-            margin-top: 2em;
-            margin-bottom: 0.9em;
-            font-weight: 600;
-        }
-
-        .content-section p {
-            margin-bottom: 1.4em; /* 增加段落间距 */
-            text-indent: 2em;
-            text-align: justify;
-            color: var(--color-text-primary);
-        }
-        .content-section ul, .content-section ol {
-            margin-left: 2.2em;
-            margin-bottom: 1.2em;
-            padding-left: 1.6em;
-        }
-        .content-section li { margin-bottom: 0.6em; }
-
-        strong, .highlight { 
-            color: var(--color-highlight); 
-            font-weight: 600;
-        }
-        /* Highlighting specific terms like k_B, eta_max, eta_min */
-        .term-highlight {
-            color: var(--color-highlight);
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-            font-weight: 600;
-            background-color: #fdecea; /* Light red background for terms */
-            padding: 0.1em 0.3em;
-            border-radius: 3px;
-        }
-
-
-        .formula {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-            background-color: var(--color-formula-bg);
-            padding: 12px 18px; /* 增加公式内边距 */
-            border-radius: var(--border-radius-small);
-            display: inline-block;
-            margin: 10px 0;
-            color: var(--color-formula-text);
-            border: 1px solid #dce4e7; /* 更柔和的公式边框 */
-            font-size: 1em; /* 保持与正文一致或稍大 */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03); /* 给公式块一点点阴影 */
-        }
-
-        .animation-container {
-            margin: 45px auto;
-            padding: 30px; /* 增加动画容器内边距 */
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius-medium);
-            background-color: #fbfdff; /* 动画容器背景色微调 */
-            box-shadow: var(--shadow-soft);
-            max-width: 760px; 
-        }
-        .animation-canvas {
-            width: 100%;
+        /* 容器样式，使其在A3纸张感觉上居中且有边距 */
+        .container {
+            width: 90%;
+            max-width: 1200px; /* 限制最大宽度，类似纸张 */
             margin: 20px auto;
+            padding: 30px;
+            background-color: #ffffff; /* 白色内容背景 */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 标题样式 */
+        h1, h2, h3 {
+            font-family: 'ZCOOL KuaiLe', cursive; /* 轻松活泼的标题字体 */
+            color: #007bff; /* 蓝色标题 */
+            margin-bottom: 0.75em;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.8em; /* 大标题 */
+            color: #2a9d8f; /* 青色，更活泼 */
+            border-bottom: 3px solid #2a9d8f;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            font-size: 2.2em;
+            color: #e76f51; /* 橙红色，强调章节 */
+            margin-top: 1.5em;
+        }
+        h3 {
+            font-size: 1.8em;
+            color: #f4a261; /* 暖黄色 */
+        }
+
+        /* 段落和文本样式 */
+        p {
+            margin-bottom: 1.2em;
+            text-align: justify; /* 两端对齐，更整洁 */
+        }
+
+        /* 强调文字 */
+        strong, .highlight {
+            color: #d62828; /* 红色强调 */
+            font-weight: bold;
+        }
+        .concept {
+            font-weight: 500;
+            color: #2a9d8f; /* 青色概念词 */
+            padding: 2px 4px;
+            background-color: #e9f5f4;
+            border-radius: 4px;
+        }
+
+        /* 公式文本样式 */
+        .formula {
             display: block;
-            border-radius: var(--border-radius-small);
-            background-color: var(--color-surface);
-            border: 1px solid #dde2e6;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace; /* 等宽字体显示公式 */
+            font-size: 1.2em;
+            padding: 15px;
+            margin: 20px auto;
+            background-color: #e9ecef; /* 淡灰色背景 */
+            border-radius: 8px;
+            color: #495057;
+            max-width: 80%;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        /* 动画容器 */
+        .animation-container {
+            width: 100%;
+            max-width: 600px; /* 动画最大宽度 */
+            height: 400px; /* 固定高度，确保canvas可见 */
+            margin: 20px auto;
+            border: 2px solid #007bff; /* 边框 */
+            border-radius: 8px;
+            overflow: hidden; /* 确保 P5 canvas 不会溢出 */
+            background-color: #f0f8ff; /* 淡蓝色背景 */
+            display: flex; /* 用于居中canvas */
+            justify-content: center;
+            align-items: center;
+        }
+        .animation-container canvas {
+            display: block; /* 移除canvas下方的额外空间 */
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 6px; /* 内部canvas也圆角 */
         }
         
-        .control-buttons {
+        /* 交互按钮样式 */
+        .controls {
             text-align: center;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
-        .control-buttons button {
-            background-color: var(--color-button-bg);
-            color: var(--color-button-text);
-            padding: 14px 24px; /* 增大按钮 */
+        .controls button, .controls input[type="range"], .controls label {
+            padding: 10px 18px;
+            font-size: 1em;
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #007bff; /* 蓝色按钮 */
+            color: white;
             border: none;
-            border-radius: var(--border-radius-small);
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 1em; /* 按钮字体大小 */
-            font-family: var(--font-primary); /* 确保按钮字体一致 */
-            font-weight: 500;
-            margin: 8px;
-            transition: background-color 0.2s ease-in-out, transform 0.15s ease, box-shadow 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .control-buttons button:hover {
-            background-color: var(--color-accent-dark);
+        .controls button:hover {
+            background-color: #0056b3; /* 深蓝色悬停 */
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
         }
-        .control-buttons button:active { 
-            transform: translateY(0px); 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .controls button:active {
+            transform: translateY(1px);
         }
-
-        @media print {
-            body {
-                font-size: 12pt; 
-                background-color: #fff; 
-                padding-top: 0; padding-bottom: 0;
-            }
-            .page-wrapper {
-                width: 277mm; 
-                margin: 0 auto; /* 打印时居中，边距由 @page 控制 */
-                padding: 0;
-            }
-            .content-section {
-                padding: 10mm; /* A3 页面内边距 */
-                margin: 0 0 5mm 0; /* 调整区块间距 */
-                box-shadow: none;
-                border: 1px solid #ccc; /* 打印时保留一个细边框 */
-                border-radius: 0; /* 打印时通常不需要圆角 */
-            }
-            .page-break { page-break-after: always; }
-            .no-print { display: none !important; }
-            canvas { max-width: 100% !important; height: auto !important; border: 1px solid #bbb !important; }
-            .animation-container { page-break-inside: avoid; border: 1px dashed #ddd; padding:15px;} /* 打印时动画容器样式 */
-            .content-section__title, .content-section__subtitle, .content-section__sub-subtitle { page-break-after: avoid; page-break-inside: avoid; }
-            p, ul, ol { page-break-inside: avoid; }
-            .control-buttons button { background-color: #eee; color: #333; border: 1px solid #ccc;}
-            .term-highlight { background-color: transparent; color: var(--color-highlight); padding:0; border-radius:0;}
+        .controls input[type="range"] {
+            vertical-align: middle;
+            cursor: grab;
+        }
+        .controls label {
+            background-color: transparent;
+            color: #343a40;
+            box-shadow: none;
         }
 
-        @font-face {
-            font-family: 'LXGW WenKai Lite';
-            src: url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.7.0/lxgwwenkailite-regular.woff2') format('woff2');
-            font-weight: normal; /* 400 */
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'LXGW WenKai Lite';
-            src: url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.7.0/lxgwwenkailite-bold.woff2') format('woff2');
-            font-weight: bold; /* 700 */
-            font-style: normal;
-        }
-
-        .text-center { text-align: center; }
-        .text-gray-600 { color: var(--color-text-secondary); } /* 使用CSS变量 */
-        .mb-12 { margin-bottom: 3rem; } /* 可按需调整 */
-        .mt-2 { margin-top: 0.5rem; }
-        .text-sm { font-size: 0.9em; } /* 调整相对大小 */
-
-        /* 页脚示例 (可选) */
-        .page-footer {
+        /* 页脚 */
+        footer {
             text-align: center;
-            padding: 25px 0;
             margin-top: 40px;
+            padding: 20px;
+            background-color: #343a40; /* 深色页脚 */
+            color: #f8f9fa; /*浅色文字*/
+            width: 100%;
+        }
+        footer p {
+            margin: 0;
             font-size: 0.9em;
-            color: var(--color-text-secondary);
-            border-top: 1px solid var(--color-border);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px; /* 移动设备上稍小字体 */
+            }
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2.2em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            .animation-container {
+                height: 300px; /* 移动设备上调整高度 */
+            }
+            .formula {
+                font-size: 1em;
+                max-width: 95%;
+            }
+            .controls button, .controls input[type="range"], .controls label {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="page-wrapper">
-        <section class="content-section" id="title-slide">
-            <h1 class="content-section__title">神经网络热力学定律：物理逻辑视角解读</h1>
-            <p class="text-center text-gray-600 mb-12 text-sm" style="text-indent:0;">基于论文 "Neural Thermodynamic Laws for Large Language Model Training" (Ziming Liu, Yizhou Liu, Jeff Gore, Max Tegmark)</p>
-        </section>
+    <div class="container">
+        <header>
+            <h1>探索宇宙的数学基石：从勾股定理到欧拉公式</h1>
+        </header>
 
-        <section class="content-section" id="intro">
-            <h2 class="content-section__subtitle">引言：当大型语言模型遇见热力学</h2>
-            <p>在人工智能飞速发展的今天，<strong class="highlight">大型语言模型（LLMs）</strong>已经展现出惊人的能力，但其内部的训练动态和学习机制在很大程度上仍是一个“黑箱”。近期，一篇引人注目的论文《神经网络热力学定律》（Neural Thermodynamic Laws for Large Language Model Training）尝试从一个全新的视角——<strong class="highlight">热力学</strong>——来揭开LLM训练的神秘面纱。这不仅仅是一个新奇的类比，更是一次深刻的理论探索，旨在为理解和优化LLM训练提供一套基于物理原理的指导框架。本文将结合论文的核心思想，特别是其首页信息丰富的概览图，从物理和逻辑的视角，对这一开创性工作进行解读，并通过一系列动画演示来直观呈现其核心概念。</p>
-        </section>
+        <main>
+            <article>
+                <section id="intro">
+                    <h2>引言：一个充满洞察力的猜想</h2>
+                    <p>“好像人类一直在玩勾股定理，欧拉公式似乎也是一种勾股定理的变体，斜边确定之后，就可以一直转，多几个维度就可以衍生出很多这个宇宙的物理规则了。” 这是一个非常有趣且富有洞察力的观点！它触及了数学与物理学核心的一些美妙联系。我们确实可以说，<strong class="highlight">勾股定理</strong> 和 <strong class="highlight">欧拉公式</strong> 是数学工具箱中两颗璀璨的明珠，它们以不同的方式捕捉了关于<span class="concept">空间、结构、变化与守恒</span>的基本思想。这两种工具，以及它们所蕴含的思想，在物理学的各个分支中都扮演着至关重要的角色。</p>
+                    <p>这篇解读将带你踏上一场从物理逻辑视角出发的思辨之旅，探讨这个观点背后的深意。我们将看到，这些看似简单的数学公式，是如何像乐高积木一样，搭建起我们理解宇宙的宏伟框架的。它们不仅仅是冰冷的符号，更是宇宙规律的优雅表达。</p>
+                </section>
 
-        <section class="content-section" id="interpretation">
-            <h2 class="content-section__subtitle">核心洞见：从训练动态到热力学法则的物理画卷</h2>
-            <p>论文的核心贡献在于构建了一座桥梁，将看似不相关的<strong class="highlight">大型语言模型（LLM）训练过程</strong>与经典的<strong class="highlight">热力学理论</strong>联系起来。这并非简单的概念挪用，而是揭示了在特定假设下（如“<strong class="highlight">河谷式损失地貌</strong>”）LLM训练动态中自然涌现出的深刻物理规律。让我们从物理和逻辑的视角，深入解读论文首页那张信息量丰富的概览图，它如同一幅浓缩的画卷，描绘了从微观的参数更新到宏观的热力学行为的演进路径。</p>
-            
-            <h3 class="content-section__sub-subtitle">第一幕：训练的舞台——河谷式损失地貌 (River-Valley Loss Landscape)</h3>
-            <p>想象一下LLM的训练过程，如同登山者在一个极其复杂、亿万维度的高山峡谷中寻找最低点（即最小损失函数值）。论文首先引入了一个关键假设：LLM的损失地貌（Loss Landscape）呈现出一种特殊的“<strong class="highlight">河谷 (River-Valley)</strong>”结构。这种结构具有以下特征：</p>
-            <ul>
-                <li><strong>多数狭窄且陡峭的“快方向”（Fast Directions, Ψ）</strong>：在这些方向上，损失函数变化剧烈，参数的微小调整可能导致损失值的大幅波动。这对应了模型中大量对局部细节敏感、易于调整但又容易陷入震荡的参数。</li>
-                <li><strong>少数宽阔且平缓的“慢方向”（Slow Directions, x）</strong>：这些方向对应模型中更全局、更本质的特征。参数在这些方向上的调整对模型性能影响深远，但损失函数的变化相对平缓，如同宽阔的河谷底部。</li>
-            </ul>
-            <p>在这种设定下，损失函数可以近似地被数学化描述为：<span class="formula">Loss = c0(Ψ) + 0.5 * a(Ψ) * x^2</span>。其中，<span class="formula">c0(Ψ)</span> 代表了在快方向上的复杂基底结构，而 <span class="formula">0.5 * a(Ψ) * x^2</span> 则描绘了在慢方向上的二次型峡谷轮廓。这一地形假设是整个神经热力学理论的基石，它极大地简化了对高维优化问题的分析，使得研究者能够区分并独立考察不同时间尺度的训练动态。</p>
-            
-            <div class="animation-container no-print">
-                <h4 class="content-section__sub-subtitle text-center" style="margin-top:0; margin-bottom: 20px; color: var(--color-heading); border:none; padding-left:0; font-size: 1.2em;">动画1：探索河谷式损失地貌</h4>
-                <div id="riverValleyCanvas" class="animation-canvas" style="height: 300px;"></div>
-                <div class="control-buttons">
-                    <button onclick="playRiverValleyAnimation()">播放动画</button>
-                    <button onclick="resetRiverValleyAnimation()">重置</button>
-                </div>
-                <p class="text-sm text-gray-600 mt-2 text-center" style="text-indent:0;">交互说明：点击播放按钮，观察粒子（代表模型参数）在模拟的损失地貌中如何沿慢速河谷（主路径）前进，同时在快速方向上（垂直于主路径的振荡）进行探索。</p>
-            </div>
+                <section id="pythagoras">
+                    <h2>勾股定理：<span class="concept">距离</span>与<span class="concept">正交性</span>的基石</h2>
+                    <p>勾股定理，即 <span class="formula">a^2 + b^2 = c^2</span>，是我们最早接触到的几何定理之一。它描述了直角三角形三边之间的关系。但它的意义远不止于此：</p>
+                    <ul>
+                        <li><strong>距离的度量：</strong> 它是欧几里得空间中计算两点间直线距离的基础。无论是二维平面上的 <span class="formula">d = sqrt((x2-x1)^2 + (y2-y1)^2)</span> 还是三维空间，乃至更高维抽象空间中的距离，其核心都烙印着勾股定理的影子。</li>
+                        <li><strong>正交性的体现：</strong> “直角”是关键，它代表了“正交”或“独立”。在物理学中，许多概念，如力的分解、速度分量、基向量等，都依赖于正交性，而勾股定理则为这些正交分量的合成提供了计算法则。</li>
+                        <li><strong>能量守恒的雏形：</strong> 在某些物理情境下，能量的不同形式（如动能和势能）可以看作是“正交”的贡献，总能量的平方可能与其他能量分量的平方和相关，这与勾股定理的形式有相似之处。</li>
+                    </ul>
+                    <p>想象一下，如果没有勾股定理，我们如何精确测量土地？导航系统如何定位？甚至连向量的模长（物理学中描述力、速度、场强等大小的工具）都无从谈起。它是我们描述静态结构和相对位置的根本。</p>
+                    <div id="pythagorasAnimationContainer" class="animation-container">
+                        </div>
+                    <div class="controls">
+                        <button id="pythagorasPlayPause">播放/暂停动画</button>
+                        <label for="pythagorasSliderA">边 a: <span id="pythagorasValueA">3</span></label>
+                        <input type="range" id="pythagorasSliderA" min="1" max="10" value="3" step="0.1">
+                        <label for="pythagorasSliderB">边 b: <span id="pythagorasValueB">4</span></label>
+                        <input type="range" id="pythagorasSliderB" min="1" max="10" value="4" step="0.1">
+                    </div>
+                </section>
 
-            <h3 class="content-section__sub-subtitle">第二幕：微观的骚动——快速动态与“神经温度”的诞生 (Fast Dynamics & Temperature)</h3>
-            <p>在LLM训练的“<strong class="highlight">稳定期 (Stable Phase)</strong>”，模型参数主要在损失地貌的快方向上进行迅速的探索和调整。此时，两个关键因素共同作用，为系统引入了类似微观粒子热运动的随机性：</p>
-            <ol>
-                <li><strong>梯度噪声（Gradient Noise）</strong>：尤其在使用小批量随机梯度下降（mini-batch SGD）等优化算法时，梯度的估算本身就带有统计噪声，使得参数更新方向并非总是指向全局最优。</li>
-                <li><strong>有限学习率（Finite Learning Rate）</strong>：学习率的存在使得参数更新不会完美地一步到达损失函数的局部最低点，而是在其附近进行持续的“探索性”徘徊和调整。</li>
-            </ol>
-            <p>这些因素的共同作用，使得模型参数在快方向上表现出类似<strong class="highlight">布朗运动</strong>的特征——一种无规则的、持续的抖动。论文巧妙地将这种微观层面、快速变化的“抖动能量”与一个宏观的物理量联系起来，定义了“<strong class="highlight">神经温度 (Neural Temperature, T)</strong>”。值得强调的是，这里的“温度”并非指物理世界中真实的热量，而是衡量模型在参数空间中探索活跃程度的一个<strong class="highlight">有效指标 (effective measure)</strong>。神经温度越高，意味着模型在快方向上的“平均动能”越大，探索范围更广，但也可能伴随着更大的不稳定性。</p>
-            
-            <div class="animation-container no-print">
-                <h4 class="content-section__sub-subtitle text-center" style="margin-top:0; margin-bottom: 20px; color: var(--color-heading); border:none; padding-left:0; font-size: 1.2em;">动画2：从训练动态到神经温度</h4>
-                <div id="dynamicsToThermoCanvas" class="animation-canvas" style="height: 300px;"></div>
-                <div class="control-buttons">
-                    <button onclick="playDynamicsToThermoAnimation()">播放动画</button>
-                    <button onclick="resetDynamicsToThermoAnimation()">重置</button>
-                </div>
-                <p class="text-sm text-gray-600 mt-2 text-center" style="text-indent:0;">交互说明：观察左侧代表训练步骤的粒子运动轨迹如何逐渐积累，并影响右侧“神经温度计”的读数上升，以及粒子群（代表参数微观状态）的“活跃度”增加。</p>
-            </div>
+                <section id="euler">
+                    <h2>欧拉公式：<span class="concept">旋转</span>、<span class="concept">振荡</span>与<span class="concept">波</span>的语言</h2>
+                    <p>欧拉公式，<span class="formula">e^(i*x) = cos(x) + i*sin(x)</span>，被誉为数学中最美丽的公式之一。它巧妙地将五个最重要的数学常数（e, i, π, 1, 0，当x=π时，e^(i*π) + 1 = 0）联系起来，但其物理意义更为深远：</p>
+                    <ul>
+                        <li><strong>描述旋转：</strong> 在复平面上，<span class="concept">e^(i*x)</span> 代表一个模长为1的向量（“斜边”固定为1），随着x的增加，这个向量的端点在单位圆上旋转。这个“转”字，正是用户观点中的精髓！</li>
+                        <li><strong>连接指数与三角函数：</strong> 它揭示了指数函数与三角函数（正弦、余弦）的深刻联系。这意味着，许多涉及振荡、波动（如声波、光波、电磁波）的物理现象，可以用简洁的复指数形式来描述和分析。</li>
+                        <li><strong>相位信息：</strong> 复数不仅有大小（模），还有相位（辐角）。欧拉公式使得处理相位变得异常方便，这在干涉、衍射、量子力学等领域至关重要。</li>
+                    </ul>
+                    <p>从交流电路中的电流电压分析，到量子力学中粒子波函数的演化，再到信号处理中的傅里叶变换，欧拉公式无处不在。它为描述<strong class="highlight">动态过程</strong>和<strong class="highlight">周期性现象</strong>提供了强有力的数学语言。</p>
+                    <div id="eulerAnimationContainer" class="animation-container">
+                        </div>
+                    <div class="controls">
+                        <button id="eulerPlayPause">播放/暂停动画</button>
+                        <label for="eulerSliderX">角度 x: <span id="eulerValueX">0</span>°</label>
+                        <input type="range" id="eulerSliderX" min="0" max="360" value="0" step="1">
+                    </div>
+                </section>
 
-            <h3 class="content-section__sub-subtitle">第三幕：宏观的演化——慢速动态与热力学定律的浮现 (Slow Dynamics & Thermodynamic Laws)</h3>
-            <p>当我们将分析的目光转向慢方向，即模型在“<strong class="highlight">退火期 (Annealing Phase)</strong>”或更长时间尺度上的行为时，一幅真正的热力学画卷便徐徐展开。论文指出，在河谷式损失地貌的假设和神经温度的概念基础上，一系列经典的热力学概念和定律能够被自然地引入、类比并推导出来，用以描述LLM的宏观训练行为：</p>
-            <ul>
-                <li><strong>神经内能 (Neural Internal Energy, U)</strong>：代表模型在当前参数配置和神经温度下所蕴含的总“能量”。它与模型参数的整体状态和微观“动能”相关。</li>
-                <li><strong>神经功 (Neural Work, W) 与神经热 (Neural Heat, Q)</strong>：参数的确定性更新部分（如梯度下降引导的移动）可以看作是外界对系统“做功”；而由梯度噪声、学习率等因素引起的随机能量交换和耗散，则类似于系统与环境间的“热交换”。</li>
-                <li><strong>神经热力学第一定律 (The 1st Law of NTL)</strong>：其核心思想表述为 <span class="formula">ΔU = W + Q</span>。这一定律指出，神经内能的变化量等于外界对模型所做的神经功与模型从“环境”（如数据批次、优化器动态）吸收的神经热之和。它为理解训练过程中的能量守恒与转换提供了基本的数学框架。</li>
-                <li><strong>神经熵 (Neural Entropy, S)</strong>：借鉴统计力学中的熵概念，神经熵用以衡量模型在参数空间中可能状态的“<strong class="highlight">多样性</strong>”或“<strong class="highlight">不确定性</strong>”程度。熵的概念与模型的复杂度、表示能力以及最终的泛化性能可能存在深刻联系。</li>
-                <li><strong>神经热力学第二定律 (The 2nd Law of NTL)</strong>：在一个孤立的（或特定条件下近似孤立的）训练系统中，神经熵倾向于随时间增加（<span class="formula">ΔS >= 0</span>）。这暗示着模型在探索过程中，会自然地趋向于更“广阔”或“多样化”的参数区域（即探索更多可能性），直到受到损失函数的强大约束或达到某种平衡。</li>
-                <li><strong>神经热容 (Neural Heat Capacity, C<sub>V</sub>)</strong>：定义为神经内能随神经温度的变化率，即模型“储存”神经热量能力的物理量。通俗地说，它反映了使模型神经温度升高一度所需要吸收的神经热量。神经热容的大小可能反映了模型对学习率变化、噪声水平等训练超参数的敏感程度。</li>
-                <li><strong>神经热导率 (Neural Thermal Conduction, k)</strong>：用于描述神经“能量”或“信息”在模型不同部分或不同参数子空间之间的传递速率。</li>
-                <li><strong>能量均分定理 (Equipartition Theorem)</strong>：在达到某种“热力学平衡态”时，神经能量倾向于平均分配到模型中各个活跃的“自由度”（degrees of freedom）上。每个这样的自由度大约贡献 <span class="formula">0.5 * k_B * T</span> 的能量（其中 <span class="term-highlight">k_B</span> 是一个类比于物理学中玻尔兹曼常数的“神经常数”）。这为理解模型不同部分的学习活跃度及其能量分布提供了一个理论视角。</li>
-                <li><strong>神经热力学第三定律 (The 3rd Law of NTL)</strong>：当神经温度趋近于绝对零度时（例如，学习率极小，梯度噪声被有效抑制），神经熵也趋于一个最小值（<span class="formula">T -> 0 implies S -> S0</span>）。这表明在极“冷”的条件下，模型会收敛到一个高度有序、低不确定性的稳定状态。</li>
-            </ul>
-            <p>这些定律共同构成了一个初步但富有洞察力的“<strong class="highlight">神经热力学 (NTL)</strong>”框架，使得我们能够运用一套全新的、基于物理直觉的语言和工具来描述、分析乃至预测LLM的复杂训练过程。</p>
-            
-            <div class="animation-container no-print">
-                 <h4 class="content-section__sub-subtitle text-center" style="margin-top:0; margin-bottom: 20px; color: var(--color-heading); border:none; padding-left:0; font-size: 1.2em;">动画3：神经第一定律 (ΔU = W + Q)</h4>
-                <div id="firstLawCanvas" class="animation-canvas" style="height: 250px;"></div>
-                <div class="control-buttons">
-                    <button onclick="playFirstLawAnimation()">播放动画</button>
-                    <button onclick="resetFirstLawAnimation()">重置</button>
-                </div>
-                <p class="text-sm text-gray-600 mt-2 text-center" style="text-indent:0;">交互说明：观察代表神经功 (W) 和神经热 (Q) 的条形如何增长，并共同构成神经内能变化 (ΔU) 的条形图示。</p>
-            </div>
+                <section id="connection">
+                    <h2>“变体”之说：勾股与欧拉的奇妙<span class="concept">统一性</span></h2>
+                    <p>那么，欧拉公式如何能被看作是勾股定理的一种“变体”呢？这里的联系非常精妙：</p>
+                    <p>考虑欧拉公式 <span class="formula">e^(i*x) = cos(x) + i*sin(x)</span>。这是一个复数，其实部是 <span class="concept">cos(x)</span>，虚部是 <span class="concept">sin(x)</span>。我们知道，复数的模长（绝对值）的平方等于其实部的平方加上虚部的平方。对于 <span class="concept">e^(i*x)</span>，其模长是1。所以：</p>
+                    <p class="formula">|e^(i*x)|^2 = (cos(x))^2 + (sin(x))^2</p>
+                    <p>因为 <span class="formula">|e^(i*x)| = 1</span>，所以我们得到：</p>
+                    <p class="formula">1^2 = (cos(x))^2 + (sin(x))^2</p>
+                    <p>这正是三角学中最基本的恒等式 <span class="highlight">(cos(x))^2 + (sin(x))^2 = 1</span>！这个恒等式本身就是勾股定理在单位圆上的直接体现：想象一个单位圆（半径为1，即“斜边”为1），圆上任意一点的坐标是 (cos(x), sin(x))，这里x是角度。根据勾股定理，水平分量cos(x)的平方加上垂直分量sin(x)的平方，等于斜边（半径）1的平方。</p>
+                    <p>所以，当欧拉公式描述一个模长（“斜边”）固定为1的向量在复平面上旋转时，其<strong class="highlight">实部和虚部始终满足勾股定理确定的约束</strong>。用户的直觉“斜边确定之后，就可以一直转”在这里得到了完美的诠释：模长（斜边）是1，而相位（角度x）则自由变化，驱动着旋转。</p>
+                    <div id="trigIdentityAnimationContainer" class="animation-container">
+                        </div>
+                    <div class="controls">
+                        <button id="trigPlayPause">播放/暂停动画</button>
+                        <label for="trigSliderAngle">角度: <span id="trigValueAngle">0</span>°</label>
+                        <input type="range" id="trigSliderAngle" min="0" max="360" value="0" step="1">
+                    </div>
+                </section>
 
-            <div class="animation-container no-print">
-                <h4 class="content-section__sub-subtitle text-center" style="margin-top:0; margin-bottom: 20px; color: var(--color-heading); border:none; padding-left:0; font-size: 1.2em;">动画4：能量均分定理</h4>
-                <div id="equipartitionCanvas" class="animation-canvas" style="height: 300px;"></div>
-                <div class="control-buttons">
-                    <button onclick="playEquipartitionAnimation()">播放动画</button>
-                    <button onclick="resetEquipartitionAnimation()">重置</button>
-                </div>
-                <p class="text-sm text-gray-600 mt-2 text-center" style="text-indent:0;">交互说明：初始时能量（粒子）集中在少数隔间（自由度）。点击播放后，观察能量如何在不同隔间中扩散，并逐渐趋于均匀分布。</p>
-            </div>
-            
-            <h3 class="content-section__sub-subtitle">第四幕：实践的启示——优化学习率策略 (Practical Applications)</h3>
-            <p>神经热力学框架最直接且重要的应用之一，就是为设计和理解<strong class="highlight">学习率调度 (Learning Rate Schedules)</strong>策略提供了深刻的物理洞见。传统的学习率调度方法多依赖于经验法则或启发式搜索，而NTL则提供了一种更具理论依据和物理解释性的指导。</p>
-            <ul>
-                <li><strong>稳定期 (Stable Phase)</strong>：在此阶段，目标是维持一个相对较高的“神经温度”，以鼓励模型充分探索参数空间，跳出局部最优解。这意味着学习率不宜设置过小，以允许足够的梯度噪声影响和参数更新幅度。论文通过实验（如图9所示）指出，采用较大的峰值学习率 <span class="term-highlight">η_max</span> 通常能够帮助模型达到更低的验证集损失，前提是该学习率不至于过大而引起训练过程的数值不稳定或“爆炸”。</li>
-                <li><strong>退火期 (Annealing Phase)</strong>：在参数空间得到较为充分的探索之后，需要逐渐降低“神经温度”，使模型能够稳定地收敛到损失地貌中的某个优质区域（即损失函数的较低点）。这在实践中对应于学习率的逐步衰减。NTL可以帮助理解衰减过程的理想速率以及目标最低“温度”（即最小学习率 <span class="term-highlight">η_min</span>）的选择依据。</li>
-            </ul>
-            <p>论文通过实验验证了其基于NTL思考提出的学习率调度策略的有效性，表明这种物理视角能够指导设计出更高效、更鲁棒的训练方案。例如，清晰地区分和理解“稳定相”和“退火相”各自的热力学特性，可以帮助从业者更好地平衡训练过程中的“<strong class="highlight">探索与利用 (exploration vs. exploitation)</strong>”的矛盾，避免模型过早陷入次优解，或在训练后期由于学习率过大而产生持续的参数震荡，难以收敛。</p>
-            
-            <div class="animation-container no-print">
-                <h4 class="content-section__sub-subtitle text-center" style="margin-top:0; margin-bottom: 20px; color: var(--color-heading); border:none; padding-left:0; font-size: 1.2em;">动画5：学习率调度策略</h4>
-                <div id="learningRateCanvas" class="animation-canvas" style="height: 350px;"></div>
-                <div class="control-buttons">
-                    <button onclick="playLearningRateAnimation('cosine')">演示余弦退火</button>
-                    <button onclick="playLearningRateAnimation('linear')">演示线性退火</button>
-                    <button onclick="resetLearningRateAnimation()">重置</button>
-                </div>
-                <p class="text-sm text-gray-600 mt-2 text-center" style="text-indent:0;">交互说明：选择不同的退火策略（如余弦退火、线性退火），观察学习率随训练步数（时间）的变化曲线。动画将突出显示初始的稳定期（高学习率）和后续的退火期（学习率衰减）。</p>
-            </div>
+                <section id="dimensions">
+                    <h2>升维之旅：从平面到<span class="concept">宇宙时空</span></h2>
+                    <p>“多几个维度就可以衍生出很多这个宇宙的物理规则了。” 这个想法非常深刻，数学工具确实可以通过增加维度来描述更复杂的物理实在。</p>
+                    <ul>
+                        <li><strong>三维空间与向量：</strong> 勾股定理自然地从二维平面推广到三维空间，用于计算三维向量的模长 <span class="formula">|V| = sqrt(Vx^2 + Vy^2 + Vz^2)</span>。物理学中的力、速度、加速度、电场、磁场等都是三维向量。</li>
+                        <li><strong>狭义相对论与闵可夫斯基时空：</strong> 爱因斯坦的狭义相对论引入了四维时空的概念。在闵可夫斯基时空中，两个事件之间的“间隔”ds的平方由一个类似勾股定理但符号有所不同的公式给出：<span class="formula">ds^2 = (c*dt)^2 - dx^2 - dy^2 - dz^2</span>。这里的 <span class="concept">c*dt</span> 是时间分量，<span class="concept">dx, dy, dz</span> 是空间分量。这个间隔在洛伦兹变换（不同惯性参考系之间的变换）下保持不变，是狭义相对论的核心。尽管形式上是“伪欧几里得”的（因为时间项和空间项符号相反，导致了双曲几何），但其结构依然让人联想到勾股定理的“平方和”思想，只是变成了“平方差”。这种不变性，类似于旋转下的长度不变性。</li>
+                        <li><strong>广义相对论与弯曲时空：</strong> 广义相对论则将时空看作是弯曲的，由物质和能量的分布决定。局部来看，弯曲时空可以近似为平直的闵可夫斯基时空。描述这种弯曲时空需要更复杂的数学工具——张量和黎曼几何，但其基础仍然离不开距离和度量的概念。</li>
+                    </ul>
+                    <p>这些例子表明，通过将勾股定理的思想（距离、度量、分量的合成）推广到更高维度和更广义的几何结构，物理学得以描述从经典力学到相对论的广阔领域。</p>
+                    <div id="spacetimeAnimationContainer" class="animation-container">
+                        </div>
+                    <div class="controls">
+                        <button id="spacetimePlayPause">播放/暂停</button>
+                        <label for="spacetimeSliderV">相对速度 v/c: <span id="spacetimeValueV">0.5</span></label>
+                        <input type="range" id="spacetimeSliderV" min="0" max="0.99" value="0.5" step="0.01">
+                    </div>
+                </section>
+                
+                <section id="quantum">
+                    <h2>微观涟漪：<span class="concept">量子世界</span>中的数学魅影</h2>
+                    <p>在神秘的量子世界，欧拉公式和勾股定理（或其变体）同样扮演着核心角色：</p>
+                    <ul>
+                        <li><strong>波函数与概率幅：</strong> 量子力学用<span class="concept">波函数 Ψ(x, t)</span> 来描述粒子的状态。波函数通常是复数，其演化遵循薛定谔方程。波函数的模长的平方 <span class="formula">|Ψ(x, t)|^2 = Ψ*Ψ_conjugate</span> 代表粒子在某处出现的概率密度。计算模长平方的过程，<strong class="highlight">本质上就是复数域的勾股定理</strong>：如果 Ψ = a + ib, 那么 |Ψ|^2 = a^2 + b^2。</li>
+                        <li><strong>叠加态与干涉：</strong> 粒子的波函数可以表示为多个本征态的线性叠加，每个态都带有复数系数（包含振幅和相位）。这些相位，通过欧拉公式与振荡行为相关联，导致了量子干涉现象——这是量子力学最奇特的特征之一。</li>
+                        <li><strong>费曼路径积分：</strong> 理查德·费曼提出的路径积分方法，认为粒子从一点到另一点会经历所有可能的路径，每条路径贡献一个复数振幅 <span class="formula">e^(iS/ħ)</span>，其中S是路径的作用量，ħ是约化普朗克常数。总的跃迁振幅是所有路径贡献的叠加（积分）。这里，欧拉公式再次出现，将作用量（一个实数）映射到复平面上的旋转。</li>
+                    </ul>
+                    <p>可以说，量子力学的整个数学框架都建立在复数和线性代数之上，而欧拉公式是理解波函数行为和相位演化的关键，勾股定理（及其在复空间的推广）则用于从复振幅中提取可观测的概率。</p>
+                    <div id="waveSuperpositionAnimationContainer" class="animation-container">
+                        </div>
+                    <div class="controls">
+                        <button id="wavePlayPause">播放/暂停</button>
+                        <label for="waveSliderPhase">相位差: <span id="waveValuePhase">0</span>°</label>
+                        <input type="range" id="waveSliderPhase" min="0" max="360" value="0" step="1">
+                    </div>
+                </section>
 
-            <h3 class="content-section__sub-subtitle">总结：物理之眼看“炼丹”</h3>
-            <p>综上所述，论文《神经网络热力学定律》为我们打开了一扇全新的窗户，让我们得以运用物理学中成熟而深刻的热力学理论体系来审视、理解和驾驭大型语言模型这个复杂巨兽的训练过程。从微观参数的随机抖动类比于分子热运动，到宏观层面涌现出的能量转换、熵增原理和相变行为，NTL不仅为长期以来被称为“炼金术”的深度学习调参工作提供了富有启发性的理论解释，也为实际的工程实践（如学习率设计、训练稳定性分析）带来了新的思路和潜在工具。这无疑是<strong class="highlight">人工智能与物理学交叉学科</strong>领域一次激动人心且意义深远的探索，预示着未来我们可能以更加科学和系统的方式来理解和构建智能系统。</p>
-        </section>
-
-        <div class="page-break"></div> 
-        
-        <section class="content-section" id="conclusion">
-            <h2 class="content-section__subtitle">结语与展望</h2>
-            <p>神经网络热力学定律（NTL）为理解大型语言模型训练提供了一个富有前景的新范式。通过将训练动态与热力学原理相联系，该框架不仅深化了我们对LLM行为的理论认知，也为优化训练策略提供了实用指导。例如，对“神经温度”的调控可以指导学习率的设计，平衡模型的探索和利用能力。对“神经熵”和“热容”等概念的引入，则可能帮助我们更好地理解模型的泛化能力、鲁棒性以及对超参数的敏感性。</p>
-            <p>当然，NTL框架目前尚处于初步发展阶段。未来的研究方向可能包括：</p>
-            <ul>
-                <li><strong>更精细的理论模型</strong>：进一步完善河谷损失地貌假设，考虑更复杂的相互作用和非平衡态过程。</li>
-                <li><strong>实验验证与扩展</strong>：在更多不同架构的LLM和多样化的任务上检验NTL的普适性，并探索其对其他类型深度学习模型的适用性。</li>
-                <li><strong>新的优化算法启示</strong>：基于NTL原理，设计全新的、具有物理意义的优化算法或正则化方法。</li>
-                <li><strong>与其他理论的联系</strong>：探索NTL与信息论、统计学习理论、动态系统理论等其他相关理论框架的深层联系。</li>
-            </ul>
-            <p>总而言之，神经网络热力学定律的提出，标志着我们向着更深层次理解智能系统迈出了重要一步。它鼓励我们跳出传统的计算机科学和数学视角，从物理学的广阔天地中汲取智慧，以期最终揭开智能涌现的奥秘。这场<strong class="highlight">“AI炼丹”与基础物理的对话</strong>，无疑将为未来的科技发展注入新的活力和想象空间。</p>
-        </section>
-
-        <footer class="page-footer no-print">
-            <p>&copy; 2024 神经网络热力学演示页面。保留所有权利。</p>
+                <section id="conclusion">
+                    <h2>结论：数学——<span class="concept">宇宙的通用语言</span></h2>
+                    <p>回到最初的观点：“好像人类一直在玩勾股定理，欧拉公式似乎也是一种勾股定理的变体，斜边确定之后，就可以一直转，多几个维度就可以衍生出很多这个宇宙的物理规则了。”</p>
+                    <p>通过以上的分析，我们可以看到这个观点中蕴含着深刻的真理。勾股定理不仅仅是关于三角形的，它关乎<strong class="highlight">距离、正交性和度量衡</strong>的基本概念。欧拉公式则完美地描述了<strong class="highlight">旋转、振荡和周期性</strong>，并将它们与指数增长/衰减联系起来。而 <span class="concept">(cos(x))^2 + (sin(x))^2 = 1</span> 这个由欧拉公式直接导出的关系，正是勾股定理在单位圆上的体现，揭示了两者之间内在的和谐。</p>
+                    <p>当这些基本数学结构被推广到更高维度、复数域、甚至更抽象的数学空间（如希尔伯特空间、闵可夫斯基时空）时，它们确实成为了构建物理理论的基石。从牛顿力学中的向量分析，到电磁学中的波动方程，从狭义与广义相对论中的时空几何，再到量子力学中的概率幅和相位演化，我们都能看到这些“数学基因”在不断地重现和变奏。</p>
+                    <p>当然，宇宙的物理规则远比这两个公式本身要复杂和丰富。它们需要更高级的数学工具，如微积分、微分方程、群论、张量分析等等。但是，勾股定理和欧拉公式所代表的核心思想——<strong class="highlight">关于不变性、对称性、分量的合成、以及周期性运动的描述</strong>——无疑是这些高级理论的重要组成部分和灵感来源。它们如同物理学家手中的基本音符，通过巧妙的组合与升华，谱写出描述宇宙万千气象的宏伟乐章。</p>
+                    <p>所以，是的，从某种意义上说，我们确实在不同层次、不同维度上“玩”着勾股定理和欧拉公式的变体，不断探索它们如何帮助我们揭开宇宙的奥秘。这正是数学作为宇宙通用语言的魅力所在！</p>
+                </section>
+            </article>
+        </main>
+        <footer>
+            <p>&copy; 2025 宇宙思辨者. 内容仅供学习交流，部分观点具有启发性，科学理论以权威文献为准。</p>
         </footer>
     </div>
 
-<script>
-    // Global control variables for animations
-    let animInstances = {};
+    <script>
+        // P5.js Sketches
 
-    // --- Animation 1: River-Valley Loss Landscape ---
-    const riverValleySketch = (p) => {
-        let particleX, particleY;
-        let valleyWidth = 400; 
-        let valleyDepth = 100; 
-        let time = 0;
-        let playing = false;
+        // --- Animation 1: Pythagorean Theorem ---
+        let sketchPythagoras = function(p) {
+            let sliderA, sliderB, playButton;
+            let a = 30, b = 40, c;
+            let angle = 0;
+            let playing = true;
+            let valueASpan, valueBSpan;
 
-        p.setup = () => {
-            let canvasContainer = p.select('#riverValleyCanvas');
-            let canvas = p.createCanvas(canvasContainer.width, canvasContainer.height);
-            canvas.parent('riverValleyCanvas'); 
-            p.resetSim();
-            p.noLoop(); 
-            p.drawScene(); 
-        };
+            p.setup = function() {
+                let canvas = p.createCanvas(p.min(p.select('#pythagorasAnimationContainer').width, 600), p.select('#pythagorasAnimationContainer').height);
+                canvas.parent('pythagorasAnimationContainer');
+                p.angleMode(p.DEGREES);
+                
+                sliderA = p.select('#pythagorasSliderA');
+                sliderB = p.select('#pythagorasSliderB');
+                playButton = p.select('#pythagorasPlayPause');
+                valueASpan = p.select('#pythagorasValueA');
+                valueBSpan = p.select('#pythagorasValueB');
 
-        p.resetSim = () => {
-            time = 0;
-            particleX = p.width * 0.1; 
-            particleY = p.height / 2 + valleyDepth / 2 * p.cos(p.map(particleX, 0, p.width, -p.PI/2, p.PI/2)) + 
-                        10 * p.sin(time * 8); 
-        };
-        
-        p.drawScene = () => {
-            p.background(240, 248, 255); 
-            p.noFill();
-            p.stroke(150, 180, 220); // Valley color
-            p.strokeWeight(3); 
-            p.beginShape();
-            for (let x_coord = 0; x_coord <= p.width; x_coord += 5) {
-                let y_coord = p.height / 2 + valleyDepth / 2 * p.cos(p.map(x_coord, 0, p.width, -p.PI/2, p.PI/2));
-                y_coord += 8 * p.sin(x_coord * 0.05); 
-                p.vertex(x_coord, y_coord);
-            }
-            p.endShape();
-            p.fill(220, 50, 50); // Particle color
-            p.noStroke();
-            p.ellipse(particleX, particleY, 18, 18); 
-            p.fill(30, 70, 120); // Text color
-            p.textSize(13);
-            p.textAlign(p.CENTER);
-            p.text("慢方向 (Slow Direction - Valley Floor)", p.width/2, p.height - 15);
-            p.text("快方向 (Fast Directions - Oscillations)", p.width/2, 20);
-        };
+                sliderA.input(() => { a = sliderA.value() * 10; valueASpan.html(sliderA.value()); p.redraw(); });
+                sliderB.input(() => { b = sliderB.value() * 10; valueBSpan.html(sliderB.value()); p.redraw(); });
+                playButton.mousePressed(() => { playing = !playing; if(playing) p.loop(); else p.noLoop(); });
+                
+                a = sliderA.value() * 10;
+                b = sliderB.value() * 10;
+                valueASpan.html(sliderA.value());
+                valueBSpan.html(sliderB.value());
 
-        p.draw = () => {
-            if (!playing) return;
-            particleX += 0.8; 
-            if (particleX > p.width * 0.9) particleX = p.width * 0.1; 
-            let baseValleyY = p.height / 2 + valleyDepth / 2 * p.cos(p.map(particleX, 0, p.width, -p.PI/2, p.PI/2));
-            baseValleyY += 8 * p.sin(particleX * 0.05); 
-            particleY = baseValleyY + 12 * p.sin(time * 8); 
-            time += 0.05;
-            p.drawScene();
-        };
-        
-        p.play = () => { if (!playing) { playing = true; p.loop(); }};
-        p.pause = () => { playing = false; p.noLoop(); };
-        p.reset = () => {
-            playing = false;
-            p.noLoop();
-            p.resetSim();
-            p.clear(); 
-            p.drawScene();
-        };
-    };
+                if (playing) p.loop(); else p.noLoop();
+            };
 
-    // --- Animation 2: Dynamics to Thermodynamics ---
-    const dynamicsToThermoSketch = (p) => {
-        let trainingSteps = [];
-        let maxSteps = 60;
-        let currentStep = 0;
-        let temperature = 0;
-        let particles = [];
-        let numThermoParticles = 25;
-        let playing = false;
+            p.draw = function() {
+                p.background(240, 248, 255); // AliceBlue
+                c = p.sqrt(a*a + b*b);
 
-        p.setup = () => {
-            let canvasContainer = p.select('#dynamicsToThermoCanvas');
-            let canvas = p.createCanvas(canvasContainer.width, canvasContainer.height);
-            canvas.parent('dynamicsToThermoCanvas');
-            p.resetSim();
-            p.noLoop();
-            p.drawScene();
-        };
+                let centerX = p.width / 2;
+                let centerY = p.height * 0.6;
+                let scaleFactor = p.min(p.width / (a + b + 20), p.height / (b + 20)) * 0.8; // Dynamic scaling
+                
+                let scaledA = a * scaleFactor;
+                let scaledB = b * scaleFactor;
+                let scaledC = c * scaleFactor;
 
-        p.resetSim = () => {
-            trainingSteps = [];
-            currentStep = 0;
-            temperature = 0;
-            particles = [];
-            let boxX = p.width * 0.55; 
-            let boxY = p.height * 0.15;
-            let boxW = p.width * 0.4;
-            let boxH = p.height * 0.45;
-            for (let i = 0; i < numThermoParticles; i++) {
-                particles.push({
-                    x: p.random(boxX + 10, boxX + boxW - 10),
-                    y: p.random(boxY + 10, boxY + boxH - 10),
-                    vx: p.random(-0.6, 0.6),
-                    vy: p.random(-0.6, 0.6),
-                    color: p.color(p.random(50,150), p.random(100,200), 255, 180)
-                });
-            }
-        };
-        
-        p.drawScene = () => {
-            p.background(250, 245, 255); 
-            // Left side: Training Dynamics
-            p.fill(60, 100, 180);
-            p.noStroke();
-            p.textSize(14);
-            p.textAlign(p.CENTER);
-            p.text("训练动态", p.width * 0.25, 25);
-            if (trainingSteps.length > 0) {
-                p.stroke(60, 100, 180, 120); // Path color
+                p.push();
+                p.translate(centerX - scaledA / 2, centerY + scaledB / 2); // Center the figure
+
+                // Draw squares
+                p.fill(255, 100, 100, 150); // Red for a^2
+                p.rect(0, -scaledA, scaledA, scaledA);
+                p.fill(100, 100, 255, 150); // Blue for b^2
+                p.rect(scaledA, 0, scaledB, scaledB);
+                
+                // Draw hypotenuse square
+                p.push();
+                p.translate(scaledA, -scaledA);
+                p.rotate(p.atan2(scaledA, scaledB));
+                p.fill(100, 255, 100, 150); // Green for c^2
+                p.rect(0, -scaledC, scaledC, scaledC);
+                p.pop();
+
+                // Draw triangle
+                p.fill(255, 200, 0, 200); // Orange triangle
+                p.stroke(0);
                 p.strokeWeight(2);
-                p.noFill();
                 p.beginShape();
-                for (let step of trainingSteps) {
-                    p.vertex(step.x, step.y);
+                p.vertex(0, 0);
+                p.vertex(scaledA, 0);
+                p.vertex(scaledA, -scaledA);
+                p.endShape(p.CLOSE);
+
+                // Labels
+                p.fill(0);
+                p.noStroke();
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(14 * scaleFactor * 2);
+                p.text("a", scaledA / 2, -scaledA - 10 * scaleFactor);
+                p.text("b", scaledA + scaledB / 2, -scaledA + 10 * scaleFactor);
+                p.push();
+                p.translate(scaledA/2, -scaledA/2);
+                p.rotate(p.atan2(scaledA, scaledB));
+                p.text("c", scaledC/2, -scaledC - 10 * scaleFactor);
+                p.pop();
+
+                p.pop();
+
+                // Formula display
+                p.fill(0);
+                p.textSize(16);
+                p.textAlign(p.CENTER, p.TOP);
+                p.text(`a=${(a/10).toFixed(1)}, b=${(b/10).toFixed(1)}, c=${(c/10).toFixed(1)}`, p.width/2, 10);
+                p.text(`a² + b² = c²`, p.width/2, 30);
+                p.text(`${(a/10).toFixed(1)}² + ${(b/10).toFixed(1)}² = ${(c/10).toFixed(1)}²`, p.width/2, 50);
+                p.text(`${(a*a/100).toFixed(2)} + ${(b*b/100).toFixed(2)} = ${(c*c/100).toFixed(2)}`, p.width/2, 70);
+
+                if (playing) {
+                    angle += 0.5; // Slow rotation for visual effect if needed, but not central to Pythagoras
+                }
+            };
+             // Ensure first frame is drawn
+            setTimeout(() => { if (p.redraw) p.redraw(); }, 0);
+        };
+        new p5(sketchPythagoras);
+
+        // --- Animation 2: Euler's Formula ---
+        let sketchEuler = function(p) {
+            let sliderX, playButton;
+            let angle = 0;
+            let playing = true;
+            let radius;
+            let valueXSpan;
+
+            p.setup = function() {
+                let canvas = p.createCanvas(p.min(p.select('#eulerAnimationContainer').width, 400), p.select('#eulerAnimationContainer').height);
+                canvas.parent('eulerAnimationContainer');
+                p.angleMode(p.DEGREES);
+                radius = p.min(p.width, p.height) * 0.35;
+
+                sliderX = p.select('#eulerSliderX');
+                playButton = p.select('#eulerPlayPause');
+                valueXSpan = p.select('#eulerValueX');
+
+                sliderX.input(() => { angle = parseFloat(sliderX.value()); valueXSpan.html(angle.toFixed(0)); p.redraw(); });
+                playButton.mousePressed(() => { playing = !playing; if(playing) p.loop(); else p.noLoop(); });
+                
+                angle = parseFloat(sliderX.value());
+                valueXSpan.html(angle.toFixed(0));
+                if (playing) p.loop(); else p.noLoop();
+            };
+
+            p.draw = function() {
+                p.background(240, 248, 255);
+                p.translate(p.width / 2, p.height / 2);
+
+                // Draw axes
+                p.stroke(150);
+                p.strokeWeight(1);
+                p.line(-p.width / 2, 0, p.width / 2, 0); // Real axis
+                p.line(0, -p.height / 2, 0, p.height / 2); // Imaginary axis
+                p.fill(0);
+                p.noStroke();
+                p.text("Re", p.width/2 - 20, -5);
+                p.text("Im", 5, -p.height/2 + 15);
+
+                // Draw unit circle
+                p.stroke(0, 0, 255, 100);
+                p.noFill();
+                p.ellipse(0, 0, radius * 2, radius * 2);
+
+                // Calculate point on circle
+                let x_coord = radius * p.cos(angle);
+                let y_coord = -radius * p.sin(angle); // Negative because P5 y-axis is inverted
+
+                // Draw radius vector
+                p.stroke(255, 0, 0); // Red vector
+                p.strokeWeight(3);
+                p.line(0, 0, x_coord, y_coord);
+
+                // Draw projections
+                p.stroke(0, 150, 0, 150); // Green for cos
+                p.strokeWeight(2);
+                p.line(x_coord, y_coord, x_coord, 0); 
+                p.stroke(200, 0, 200, 150); // Purple for sin
+                p.line(x_coord, y_coord, 0, y_coord);
+
+                // Draw point
+                p.fill(255, 0, 0);
+                p.noStroke();
+                p.ellipse(x_coord, y_coord, 8, 8);
+
+                // Text labels
+                p.fill(0);
+                p.textSize(14);
+                p.textAlign(p.LEFT);
+                p.text(`cos(${angle.toFixed(0)}°)`, x_coord / 2, -10);
+                p.textAlign(p.RIGHT);
+                p.text(`sin(${angle.toFixed(0)}°)`, -10, y_coord / 2);
+                p.textAlign(p.CENTER);
+                p.text(`e^(i*${angle.toFixed(0)}°) = cos(${angle.toFixed(0)}°) + i*sin(${angle.toFixed(0)}°)`, 0, p.height/2 - 20);
+
+
+                if (playing) {
+                    angle = (angle + 0.5) % 360;
+                    sliderX.value(angle);
+                    valueXSpan.html(angle.toFixed(0));
+                }
+            };
+            setTimeout(() => { if (p.redraw) p.redraw(); }, 0);
+        };
+        new p5(sketchEuler);
+
+        // --- Animation 3: Trig Identity (cos^2 + sin^2 = 1) ---
+        let sketchTrigIdentity = function(p) {
+            let angleSlider, playButton;
+            let angle = 0;
+            let playing = true;
+            let radius;
+            let valueAngleSpan;
+
+            p.setup = function() {
+                let canvas = p.createCanvas(p.min(p.select('#trigIdentityAnimationContainer').width, 400), p.select('#trigIdentityAnimationContainer').height);
+                canvas.parent('trigIdentityAnimationContainer');
+                p.angleMode(p.DEGREES);
+                radius = p.min(p.width, p.height) * 0.3;
+
+                angleSlider = p.select('#trigSliderAngle');
+                playButton = p.select('#trigPlayPause');
+                valueAngleSpan = p.select('#trigValueAngle');
+
+                angleSlider.input(() => { angle = parseFloat(angleSlider.value()); valueAngleSpan.html(angle.toFixed(0)); p.redraw(); });
+                playButton.mousePressed(() => { playing = !playing; if(playing) p.loop(); else p.noLoop(); });
+                
+                angle = parseFloat(angleSlider.value());
+                valueAngleSpan.html(angle.toFixed(0));
+                if (playing) p.loop(); else p.noLoop();
+            };
+
+            p.draw = function() {
+                p.background(240, 248, 255);
+                p.translate(p.width / 2, p.height * 0.6); // Shift down for text on top
+
+                // Unit circle
+                p.stroke(150);
+                p.noFill();
+                p.ellipse(0, 0, radius * 2, radius * 2);
+
+                let cos_val = p.cos(angle);
+                let sin_val = p.sin(angle);
+                let x = radius * cos_val;
+                let y = -radius * sin_val; // P5 y-axis inverted
+
+                // Triangle sides
+                p.strokeWeight(2);
+                p.stroke(0, 0, 255); // Blue for cos(angle)
+                p.line(0, 0, x, 0);
+                p.stroke(255, 0, 0); // Red for sin(angle)
+                p.line(x, 0, x, y);
+                p.stroke(0, 128, 0); // Green for hypotenuse (radius=1)
+                p.line(0, 0, x, y);
+
+                // Point on circle
+                p.fill(0);
+                p.noStroke();
+                p.ellipse(x, y, 8, 8);
+
+                // Labels
+                p.fill(0,0,255);
+                p.text(`cos(${angle.toFixed(0)}°)`, x / 2, 15);
+                p.fill(255,0,0);
+                p.text(`sin(${angle.toFixed(0)}°)`, x + 5, y / 2);
+                p.fill(0,128,0);
+                p.text("1", x/2 - 10, y/2 - 5);
+
+                // Equation
+                p.fill(0);
+                p.textAlign(p.CENTER, p.TOP);
+                p.textSize(16);
+                let cosSq = p.pow(cos_val, 2);
+                let sinSq = p.pow(sin_val, 2);
+                p.text(`cos²(${angle.toFixed(0)}°) + sin²(${angle.toFixed(0)}°) = 1`, 0, -p.height * 0.6 + 20);
+                p.text(`${cosSq.toFixed(2)} + ${sinSq.toFixed(2)} = ${(cosSq + sinSq).toFixed(2)}`, 0, -p.height * 0.6 + 45);
+                
+                if (playing) {
+                    angle = (angle + 0.5) % 360;
+                    angleSlider.value(angle);
+                    valueAngleSpan.html(angle.toFixed(0));
+                }
+            };
+            setTimeout(() => { if (p.redraw) p.redraw(); }, 0);
+        };
+        new p5(sketchTrigIdentity);
+
+        // --- Animation 4: Spacetime Diagram (Conceptual Lorentz Transformation) ---
+        let sketchSpacetime = function(p) {
+            let vSlider, playButton;
+            let beta = 0.5; // v/c
+            let playing = true;
+            let time = 0;
+            let valueVSpan;
+
+            p.setup = function() {
+                let canvas = p.createCanvas(p.min(p.select('#spacetimeAnimationContainer').width, 400), p.select('#spacetimeAnimationContainer').height);
+                canvas.parent('spacetimeAnimationContainer');
+                
+                vSlider = p.select('#spacetimeSliderV');
+                playButton = p.select('#spacetimePlayPause');
+                valueVSpan = p.select('#spacetimeValueV');
+
+                vSlider.input(() => { beta = parseFloat(vSlider.value()); valueVSpan.html(beta.toFixed(2)); p.redraw(); });
+                playButton.mousePressed(() => { playing = !playing; if(playing) p.loop(); else p.noLoop(); });
+                
+                beta = parseFloat(vSlider.value());
+                valueVSpan.html(beta.toFixed(2));
+                if (playing) p.loop(); else p.noLoop();
+            };
+
+            p.draw = function() {
+                p.background(240, 248, 255);
+                p.translate(p.width / 2, p.height / 2);
+                let scale = p.min(p.width, p.height) / 3;
+
+                // Stationary frame (S) axes (x, ct)
+                p.stroke(0);
+                p.strokeWeight(1);
+                p.line(-p.width/2, 0, p.width/2, 0); // x-axis
+                p.line(0, -p.height/2, 0, p.height/2); // ct-axis
+                p.fill(0);
+                p.noStroke();
+                p.text("x", p.width/2 - 15, -5);
+                p.text("ct", 5, -p.height/2 + 15);
+
+                // Moving frame (S') axes (x', ct')
+                // gamma factor
+                let gamma = 1 / p.sqrt(1 - beta*beta);
+                
+                // ct' axis: x = beta * ct  (slope = 1/beta for ct vs x, or beta for x vs ct)
+                // x' axis: ct = beta * x   (slope = beta for ct vs x)
+                p.stroke(255, 0, 0, 150); // Red for S'
+                p.strokeWeight(2);
+                
+                // ct' axis (line where x' = 0)
+                // In S frame: x = v*t => x = beta * (ct)
+                p.line(0,0, beta * scale, scale);
+                p.line(0,0, -beta * scale, -scale);
+                
+                // x' axis (line where t' = 0)
+                // In S frame: t = (v/c^2)*x => ct = beta * x
+                p.line(0,0, scale, beta*scale);
+                p.line(0,0, -scale, -beta*scale);
+
+                p.fill(255,0,0);
+                p.noStroke();
+                // Label for x' (along the x' axis)
+                p.push();
+                p.rotate(p.atan(beta));
+                p.text("x'", scale * 0.8, -5);
+                p.pop();
+                // Label for ct' (along the ct' axis)
+                p.push();
+                p.rotate(p.atan(1/beta)); // Angle with y-axis (ct) is atan(beta)
+                p.text("ct'", 5, -scale * 0.8 );
+                p.pop();
+
+
+                // An event
+                let eventX = p.cos(time * 2) * scale * 0.3; // Some arbitrary event
+                let eventCT = p.sin(time * 2) * scale * 0.3 + scale * 0.2;
+
+                p.fill(0,0,255);
+                p.ellipse(eventX, -eventCT, 10, 10); // Draw event (y is inverted)
+
+                // Spacetime interval (conceptual)
+                // s^2 = (ct)^2 - x^2
+                // For light cone: (ct)^2 - x^2 = 0 => ct = +/- x
+                p.stroke(200, 200, 0, 100); // Yellow for light cone
+                p.line(0,0, p.width/2, -p.width/2);
+                p.line(0,0, -p.width/2, p.width/2);
+                p.line(0,0, p.width/2, p.width/2);
+                p.line(0,0, -p.width/2, -p.width/2);
+
+
+                p.fill(0);
+                p.noStroke();
+                p.textAlign(p.CENTER, p.BOTTOM);
+                p.text(`Invariant interval: s² = (cΔt)² - (Δx)²`, 0, p.height/2 - 10);
+
+                if (playing) {
+                    time += 0.01;
+                }
+            };
+            setTimeout(() => { if (p.redraw) p.redraw(); }, 0);
+        };
+        new p5(sketchSpacetime);
+
+        // --- Animation 5: Wave Superposition (Conceptual for Quantum) ---
+        let sketchWaveSuperposition = function(p) {
+            let phaseSlider, playButton;
+            let phaseOffset = 0; // degrees
+            let playing = true;
+            let t = 0;
+            let valuePhaseSpan;
+
+            p.setup = function() {
+                let canvas = p.createCanvas(p.min(p.select('#waveSuperpositionAnimationContainer').width, 600), p.select('#waveSuperpositionAnimationContainer').height);
+                canvas.parent('waveSuperpositionAnimationContainer');
+                p.angleMode(p.DEGREES);
+
+                phaseSlider = p.select('#waveSliderPhase');
+                playButton = p.select('#wavePlayPause');
+                valuePhaseSpan = p.select('#waveValuePhase');
+
+                phaseSlider.input(() => { phaseOffset = parseFloat(phaseSlider.value()); valuePhaseSpan.html(phaseOffset.toFixed(0)); p.redraw(); });
+                playButton.mousePressed(() => { playing = !playing; if(playing) p.loop(); else p.noLoop(); });
+                
+                phaseOffset = parseFloat(phaseSlider.value());
+                valuePhaseSpan.html(phaseOffset.toFixed(0));
+                if (playing) p.loop(); else p.noLoop();
+            };
+
+            p.draw = function() {
+                p.background(240, 248, 255);
+                let amplitude = p.height / 6;
+                let waveLength = 200;
+
+                // Wave 1
+                p.stroke(0, 0, 255, 150); // Blue
+                p.noFill();
+                p.strokeWeight(2);
+                p.beginShape();
+                for (let x = 0; x < p.width; x += 5) {
+                    let y = p.height / 3 + amplitude * p.sin(360 * (x / waveLength) - t);
+                    p.vertex(x, y);
                 }
                 p.endShape();
-                p.fill(200, 60, 60); // Current position marker color
+
+                // Wave 2
+                p.stroke(255, 0, 0, 150); // Red
+                p.beginShape();
+                for (let x = 0; x < p.width; x += 5) {
+                    let y = p.height / 3 + amplitude * p.sin(360 * (x / waveLength) - t + phaseOffset);
+                    p.vertex(x, y);
+                }
+                p.endShape();
+
+                // Superposition
+                p.stroke(0, 128, 0); // Green
+                p.strokeWeight(3);
+                p.beginShape();
+                for (let x = 0; x < p.width; x += 5) {
+                    let y1 = amplitude * p.sin(360 * (x / waveLength) - t);
+                    let y2 = amplitude * p.sin(360 * (x / waveLength) - t + phaseOffset);
+                    p.vertex(x, p.height * (2/3) + y1 + y2); // Plot superposition lower
+                }
+                p.endShape();
+                
+                p.fill(0);
                 p.noStroke();
-                p.ellipse(trainingSteps[trainingSteps.length-1].x, trainingSteps[trainingSteps.length-1].y, 10, 10);
-            }
-            // Right side: Thermodynamics
-            p.fill(180, 60, 60); // Title color
-            p.noStroke();
-            p.text("神经温度", p.width * 0.75, 25);
-            // Thermometer
-            let thermoX = p.width * 0.75;
-            let thermoYBase = p.height * 0.85;
-            let thermoHeightMax = p.height * 0.35;
-            p.fill(200, 200, 220); // Bulb color
-            p.ellipse(thermoX, thermoYBase, 30, 30); // Bulb
-            p.rect(thermoX - 8, thermoYBase - thermoHeightMax - 5, 16, thermoHeightMax + 5); // Stem
-            p.fill(255,30,30); // Mercury color
-            let tempHeight = p.map(temperature, 0, 100, 0, thermoHeightMax);
-            p.ellipse(thermoX, thermoYBase, 26, 26); // Mercury in bulb
-            if (tempHeight > 0) {
-                 p.rect(thermoX - 6, thermoYBase - tempHeight, 12, tempHeight);
-            }
-            // Particles in a box
-            let boxX = p.width * 0.55;
-            let boxY = p.height * 0.15;
-            let boxW = p.width * 0.4;
-            let boxH = p.height * 0.45;
-            p.stroke(120, 120, 150); // Box border color
-            p.strokeWeight(1.5);
-            p.noFill();
-            p.rect(boxX, boxY, boxW, boxH);
-            p.noStroke();
-            for (let pt of particles) {
-                p.fill(pt.color);
-                p.ellipse(pt.x, pt.y, 9, 9);
-            }
-        };
+                p.textSize(14);
+                p.text("波 1 (蓝色)", 10, p.height/3 - amplitude - 5);
+                p.text("波 2 (红色, 相位差: " + phaseOffset.toFixed(0) + "°)", 10, p.height/3 + amplitude + 15);
+                p.text("叠加波 (绿色)", 10, p.height*(2/3) - amplitude*2 - 5);
 
-        p.draw = () => {
-            if (!playing) return;
-            if (currentStep < maxSteps) {
-                let newX = p.width * 0.05 + (currentStep / maxSteps) * p.width * 0.4;
-                let newY = p.height * 0.65 + p.sin(currentStep * 0.2) * p.height * 0.15 - p.cos(currentStep*0.1) * p.height*0.05 ;
-                trainingSteps.push({ x: newX, y: newY });
-                currentStep++;
-                temperature = p.map(currentStep, 0, maxSteps, 0, 100);
-            }
-            let speedFactor = p.map(temperature, 0, 100, 0.3, 3.5);
-            let boxX = p.width * 0.55;
-            let boxY = p.height * 0.15;
-            let boxW = p.width * 0.4;
-            let boxH = p.height * 0.45;
-            for (let pt of particles) {
-                pt.x += pt.vx * speedFactor;
-                pt.y += pt.vy * speedFactor;
-                if (pt.x < boxX + 5 || pt.x > boxX + boxW - 5) {pt.vx *= -1; pt.x = p.constrain(pt.x, boxX + 5.1, boxX + boxW - 5.1);}
-                if (pt.y < boxY + 5 || pt.y > boxY + boxH - 5) {pt.vy *= -1; pt.y = p.constrain(pt.y, boxY + 5.1, boxY + boxH - 5.1);}
-            }
-            p.drawScene();
-        };
-        
-        p.play = () => { if(!playing) {playing = true; p.loop(); }};
-        p.pause = () => { playing = false; p.noLoop(); };
-        p.reset = () => {
-            playing = false;
-            p.noLoop();
-            p.resetSim();
-            p.clear();
-            p.drawScene();
-        };
-    };
 
-    // --- Animation 3: Learning Rate Schedule ---
-    const learningRateSketch = (p) => {
-        let totalSteps = 100; 
-        let currentPlotStep = 0; 
-        let etaMax = 0.01;
-        let etaMin = 0.0001;
-        let lrCurvePoints = []; 
-        let scheduleType = 'cosine'; 
-        let playing = false;
-        let stablePhaseRatio = 0.2; 
-
-        p.setup = () => {
-            let canvasContainer = p.select('#learningRateCanvas');
-            let canvas = p.createCanvas(canvasContainer.width, canvasContainer.height);
-            canvas.parent('learningRateCanvas');
-            p.frameRate(30); 
-            p.resetSim(); 
-            p.noLoop();
-        };
-        
-        p.calculateCurvePoints = () => {
-            lrCurvePoints = [];
-            let padding = 50;
-            for (let i = 0; i <= totalSteps; i++) {
-                let lr;
-                let stableSteps = totalSteps * stablePhaseRatio;
-                if (i < stableSteps) { 
-                    lr = etaMax;
-                } else { 
-                    let progressInAnneal = (i - stableSteps) / (totalSteps - stableSteps);
-                    if (scheduleType === 'cosine') {
-                        lr = etaMin + 0.5 * (etaMax - etaMin) * (1 + p.cos(p.PI * progressInAnneal));
-                    } else { // linear
-                        lr = etaMax - (etaMax - etaMin) * progressInAnneal;
-                    }
+                if (playing) {
+                    t = (t + 2) % 360;
                 }
-                lr = p.max(lr, etaMin); 
-                let x_coord = p.map(i, 0, totalSteps, padding, p.width - padding);
-                let y_coord = p.map(lr, etaMin, etaMax, p.height - padding, padding); // Inverted Y for screen
-                lrCurvePoints.push({x: x_coord, y: y_coord, val: lr});
-            }
+            };
+            setTimeout(() => { if (p.redraw) p.redraw(); }, 0);
         };
+        new p5(sketchWaveSuperposition);
 
-        p.resetSim = () => {
-            currentPlotStep = 0;
-            p.calculateCurvePoints(); 
-            p.drawScene(); 
-        };
-
-        p.setSchedule = (type) => {
-            scheduleType = type;
-            p.resetSim(); 
-        };
-        
-        p.drawScene = () => {
-            p.background(255, 250, 240); 
-            let padding = 50;
-            // Draw axes
-            p.stroke(80, 80, 100); // Axes color
-            p.strokeWeight(1.5);
-            p.line(padding, padding, padding, p.height - padding); // Y-axis
-            p.line(padding, p.height - padding, p.width - padding, p.height - padding); // X-axis
-
-            // Labels
-            p.fill(50, 50, 70); // Label text color
-            p.noStroke();
-            p.textSize(13);
-            p.textAlign(p.CENTER, p.CENTER);
-            // Y-axis label (rotated)
-            p.push();
-            p.translate(padding / 2.5, p.height / 2);
-            p.rotate(-p.HALF_PI);
-            p.text("学习率 (LR)", 0, 0);
-            p.pop();
-            p.text("训练步数 (Training Steps)", p.width / 2, p.height - padding / 2.5);
-            // Axis ticks
-            p.textAlign(p.RIGHT, p.CENTER);
-            p.text(etaMax.toFixed(4), padding - 8, padding);
-            p.text(etaMin.toFixed(4), padding - 8, p.height - padding);
-            p.textAlign(p.CENTER, p.TOP);
-            p.text("0", padding, p.height - padding + 8);
-            p.text(totalSteps, p.width - padding, p.height - padding + 8);
-            // Title
-            p.textSize(16);
-            p.fill(scheduleType === 'cosine' ? '#00695c' : '#ad1457'); // Title color based on type
-            p.textAlign(p.CENTER, p.CENTER);
-            p.text(`学习率调度: ${scheduleType === 'cosine' ? '余弦退火' : '线性退火'}`, p.width/2, 25);
-
-            // Plot LR curve up to currentPlotStep
-            p.stroke(scheduleType === 'cosine' ? '#009688' : '#d81b60'); // Curve color
-            p.strokeWeight(2.5);
-            p.noFill();
-            p.beginShape();
-            for (let i = 0; i < currentPlotStep && i < lrCurvePoints.length; i++) {
-                p.vertex(lrCurvePoints[i].x, lrCurvePoints[i].y);
-            }
-            p.endShape();
-
-            // Current LR value display
-            if (currentPlotStep > 0 && currentPlotStep <= lrCurvePoints.length) {
-                let lastPoint = lrCurvePoints[currentPlotStep-1];
-                p.fill(scheduleType === 'cosine' ? '#00695c' : '#ad1457');
-                p.noStroke();
-                p.ellipse(lastPoint.x, lastPoint.y, 8, 8); // Marker for current point
-                p.textSize(12);
-                p.textAlign(p.LEFT, p.BOTTOM);
-                p.text(`LR: ${lastPoint.val.toFixed(5)}`, lastPoint.x + 10, lastPoint.y - 5);
-            }
-
-            // Highlight stable/annealing phases
-            let stableEndStep = totalSteps * stablePhaseRatio; 
-            let stableEndX = p.map(stableEndStep, 0, totalSteps, padding, p.width - padding);
-            p.stroke(0,150,0, 60); // Phase line color
-            p.strokeWeight(1);
-            p.line(stableEndX, padding, stableEndX, p.height - padding); // Vertical line separating phases
-            p.fill(0,120,0, 40); // Phase label background
-            p.noStroke();
-            p.textAlign(p.CENTER);
-            p.textSize(12);
-            p.text("稳定期", p.map(stableEndStep/2, 0, totalSteps, padding, p.width - padding), padding + 12);
-            p.text("退火期", p.map(stableEndStep + (totalSteps-stableEndStep)/2, 0, totalSteps, padding, p.width - padding), padding + 12);
-        };
-
-        p.draw = () => {
-            if (!playing) return;
-            if (currentPlotStep <= totalSteps) {
-                currentPlotStep++;
-            } else {
-                p.pause(); 
-            }
-            p.drawScene();
-        };
-        
-        p.play = (type) => {
-            if (type) p.setSchedule(type); 
-            else if (currentPlotStep > totalSteps) p.resetSim(); 
-            if (!playing) { playing = true;  p.loop(); }
-        };
-        p.pause = () => { playing = false; p.noLoop(); };
-        p.reset = () => {
-            playing = false;
-            p.noLoop();
-            p.resetSim(); 
-        };
-    };
-
-    // --- Animation 4: First Law (Delta_U = W + Q) ---
-    const firstLawSketch = (p) => {
-        let w = 0, q = 0, deltaU = 0;
-        let maxIndividualVal = 100; 
-        let currentAnimStep = 0;
-        let totalAnimSteps = 120; 
-        let playing = false;
-
-        p.setup = () => {
-            let canvasContainer = p.select('#firstLawCanvas');
-            let canvas = p.createCanvas(canvasContainer.width, canvasContainer.height);
-            canvas.parent('firstLawCanvas');
-            p.resetSim();
-            p.noLoop();
-            p.drawScene();
-        };
-        
-        p.resetSim = () => { w = 0; q = 0; deltaU = 0; currentAnimStep = 0; };
-
-        p.drawScene = () => {
-            p.background(245, 245, 220); 
-            let barWidth = p.width / 6;
-            let barSpacing = p.width / 18; 
-            let baseY = p.height - 40;
-            let maxHeight = p.height - 70;
-            // W bar
-            p.fill(100, 150, 255, 220); // W bar color
-            let hW = p.map(w, 0, maxIndividualVal, 0, maxHeight);
-            p.rect(barSpacing * 2, baseY - hW, barWidth, hW, 5); 
-            p.fill(20,20,50); p.textSize(14); p.textAlign(p.CENTER);
-            p.text("神经功 (W)", barSpacing * 2 + barWidth / 2, baseY + 18);
-            p.text(w.toFixed(0), barSpacing * 2 + barWidth / 2, baseY - hW - 8);
-            // Q bar
-            p.fill(255, 150, 100, 220); // Q bar color
-            let hQ = p.map(q, 0, maxIndividualVal, 0, maxHeight);
-            p.rect(barSpacing * 4 + barWidth, baseY - hQ, barWidth, hQ, 5);
-            p.fill(20,20,50); // Text color
-            p.text("神经热 (Q)", barSpacing * 4 + barWidth * 1.5, baseY + 18);
-            p.text(q.toFixed(0), barSpacing * 4 + barWidth * 1.5, baseY - hQ - 8);
-            // Delta_U bar
-            p.fill(100, 200, 100, 220); // Delta_U bar color
-            let hU = p.map(deltaU, 0, maxIndividualVal * 2, 0, maxHeight); 
-            p.rect(barSpacing * 7 + barWidth * 2.5, baseY - hU, barWidth, hU, 5); 
-            p.fill(20,20,50); // Text color
-            p.text("ΔU (内能变化)", barSpacing * 7 + barWidth * 3, baseY + 18);
-            p.text(deltaU.toFixed(0), barSpacing * 7 + barWidth * 3, baseY - hU - 8);
-            // Plus and Equals signs
-            p.textSize(28);
-            p.fill(50,50,80); // Sign color
-            p.text("+", barSpacing * 3 + barWidth * 0.75, baseY - maxHeight/2 - 10);
-            p.text("=", barSpacing * 5.5 + barWidth * 1.75, baseY - maxHeight/2 - 10);
-            // Title
-            p.textSize(16);
-            p.fill(30,30,60); // Title color
-            p.text("神经第一定律: ΔU = W + Q", p.width/2, 25);
-        };
-
-        p.draw = () => {
-            if (!playing) return;
-            if (currentAnimStep < totalAnimSteps) {
-                let t = currentAnimStep / totalAnimSteps;
-                let eased_t = t * (2 - t); // Quadratic ease-out
-                w = p.min(eased_t * maxIndividualVal * 0.8, maxIndividualVal); 
-                q = p.min(eased_t * maxIndividualVal * 0.6, maxIndividualVal); 
-                deltaU = w + q;
-                currentAnimStep++;
-            } else {
-                p.pause();
-            }
-            p.drawScene();
-        };
-        
-        p.play = () => { if(!playing || currentAnimStep >= totalAnimSteps) {p.resetSim();} playing = true; p.loop(); };
-        p.pause = () => { playing = false; p.noLoop(); };
-        p.reset = () => {
-            playing = false;
-            p.noLoop();
-            p.resetSim();
-            p.clear();
-            p.drawScene();
-        };
-    };
-
-    // --- Animation 5: Equipartition Theorem ---
-    const equipartitionSketch = (p) => {
-        let compartments = [];
-        let numCompartments = 4;
-        let particles = [];
-        let numParticles = 60; 
-        let playing = false;
-        let particleRadius = 4;
-
-        p.setup = () => {
-            let canvasContainer = p.select('#equipartitionCanvas');
-            let canvas = p.createCanvas(canvasContainer.width, canvasContainer.height);
-            canvas.parent('equipartitionCanvas');
-            p.resetSim();
-            p.noLoop();
-            p.drawScene();
-        };
-
-        p.resetSim = () => {
-            compartments = [];
-            particles = [];
-            let compWidth = (p.width - (numCompartments + 1) * 5) / numCompartments; 
-            let compStartX = 5;
-            for (let i = 0; i < numCompartments; i++) {
-                compartments.push({
-                    x: compStartX + i * (compWidth + 5),
-                    y: p.height * 0.25,
-                    w: compWidth,
-                    h: p.height * 0.5,
-                    particleCount: 0,
-                    color: p.color(p.random(180,220), p.random(180,220), p.random(200,255), 100) // Compartment bg color
-                });
-            }
-            // Initially, all particles in the first compartment
-            for (let i = 0; i < numParticles; i++) {
-                let compIndex = 0; 
-                particles.push({
-                    x: p.random(compartments[compIndex].x + particleRadius, compartments[compIndex].x + compartments[compIndex].w - particleRadius),
-                    y: p.random(compartments[compIndex].y + particleRadius, compartments[compIndex].y + compartments[compIndex].h - particleRadius),
-                    vx: p.random(-1.5, 1.5), 
-                    vy: p.random(-1.5, 1.5),
-                    currentComp: compIndex,
-                    color: p.color(p.random(200,255), p.random(80,150), p.random(50,100), 220) // Particle color
-                });
-                compartments[compIndex].particleCount++;
-            }
-        };
-        
-        p.drawScene = () => {
-            p.background(235, 245, 235); 
-            // Draw compartments
-            p.stroke(80, 100, 80); // Compartment border color
-            p.strokeWeight(1.5);
-            for (let i = 0; i < numCompartments; i++) {
-                p.fill(compartments[i].color); 
-                p.rect(compartments[i].x, compartments[i].y, compartments[i].w, compartments[i].h, 3); // Rounded corners
-                p.fill(30, 50, 30); // Text color
-                p.noStroke();
-                p.textAlign(p.CENTER);
-                p.textSize(12);
-                p.text(`自由度 ${i+1}`, compartments[i].x + compartments[i].w / 2, compartments[i].y + compartments[i].h + 18);
-                p.textSize(11);
-                p.text(`能量: ${compartments[i].particleCount}`, compartments[i].x + compartments[i].w / 2, compartments[i].y - 12);
-            }
-            // Draw particles
-            p.noStroke();
-            for (let particle of particles) {
-                p.fill(particle.color);
-                p.ellipse(particle.x, particle.y, particleRadius * 2, particleRadius * 2);
-            }
-            // Title
-            p.fill(20, 60, 20); // Title color
-            p.textSize(16);
-            p.textAlign(p.CENTER);
-            p.text("能量均分定理演示", p.width/2, 30);
-        };
-
-        p.draw = () => {
-            if (!playing) return;
-            for (let comp of compartments) comp.particleCount = 0; // Reset counts each frame
-            for (let particle of particles) {
-                particle.x += particle.vx;
-                particle.y += particle.vy;
-                let currentComp = compartments[particle.currentComp];
-                // Bounce off compartment walls
-                if (particle.x < currentComp.x + particleRadius || particle.x > currentComp.x + currentComp.w - particleRadius) {
-                    particle.vx *= -1;
-                    particle.x = p.constrain(particle.x, currentComp.x + particleRadius, currentComp.x + currentComp.w - particleRadius);
-                }
-                if (particle.y < currentComp.y + particleRadius || particle.y > currentComp.y + currentComp.h - particleRadius) {
-                    particle.vy *= -1;
-                    particle.y = p.constrain(particle.y, currentComp.y + particleRadius, currentComp.y + currentComp.h - particleRadius);
-                }
-                // Chance to move to an adjacent compartment
-                if (p.random(1) < 0.01) { 
-                    let newCompIndex = particle.currentComp;
-                    let dir = p.random(1) < 0.5 ? -1 : 1; 
-                    if (dir === -1 && particle.currentComp > 0) { 
-                        newCompIndex = particle.currentComp - 1;
-                    } else if (dir === 1 && particle.currentComp < numCompartments - 1) { 
-                        newCompIndex = particle.currentComp + 1;
-                    }
-                    if (newCompIndex !== particle.currentComp) {
-                        particle.currentComp = newCompIndex;
-                        // Move particle towards center of new compartment to avoid immediate wall collision
-                        particle.x = compartments[newCompIndex].x + compartments[newCompIndex].w / 2 + p.random(-5,5);
-                        particle.y = compartments[newCompIndex].y + compartments[newCompIndex].h / 2 + p.random(-5,5);
-                    }
-                }
-                compartments[particle.currentComp].particleCount++;
-            }
-            p.drawScene();
-        };
-        
-        p.play = () => { if(!playing) {playing = true; p.loop();} };
-        p.pause = () => { playing = false; p.noLoop(); };
-        p.reset = () => {
-            playing = false;
-            p.noLoop();
-            p.resetSim();
-            p.clear();
-            p.drawScene();
-        };
-    };
-
-    // --- Global Animation Control Functions ---
-    function playRiverValleyAnimation() { if (animInstances.riverValley) animInstances.riverValley.play(); }
-    function resetRiverValleyAnimation() { if (animInstances.riverValley) animInstances.riverValley.reset(); }
-    function playDynamicsToThermoAnimation() { if (animInstances.dynamicsToThermo) animInstances.dynamicsToThermo.play(); }
-    function resetDynamicsToThermoAnimation() { if (animInstances.dynamicsToThermo) animInstances.dynamicsToThermo.reset(); }
-    function playLearningRateAnimation(type) { if (animInstances.learningRate) animInstances.learningRate.play(type); }
-    function resetLearningRateAnimation() { if (animInstances.learningRate) animInstances.learningRate.reset(); }
-    function playFirstLawAnimation() { if (animInstances.firstLaw) animInstances.firstLaw.play(); }
-    function resetFirstLawAnimation() { if (animInstances.firstLaw) animInstances.firstLaw.reset(); }
-    function playEquipartitionAnimation() { if (animInstances.equipartition) animInstances.equipartition.play(); }
-    function resetEquipartitionAnimation() { if (animInstances.equipartition) animInstances.equipartition.reset(); }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => { 
-            if (typeof riverValleySketch === 'function' && document.getElementById('riverValleyCanvas')) {
-                animInstances.riverValley = new p5(riverValleySketch, 'riverValleyCanvas');
-            }
-            if (typeof dynamicsToThermoSketch === 'function' && document.getElementById('dynamicsToThermoCanvas')) {
-                animInstances.dynamicsToThermo = new p5(dynamicsToThermoSketch, 'dynamicsToThermoCanvas');
-            }
-            if (typeof learningRateSketch === 'function' && document.getElementById('learningRateCanvas')) {
-                animInstances.learningRate = new p5(learningRateSketch, 'learningRateCanvas');
-            }
-            if (typeof firstLawSketch === 'function' && document.getElementById('firstLawCanvas')) {
-                animInstances.firstLaw = new p5(firstLawSketch, 'firstLawCanvas');
-            }
-            if (typeof equipartitionSketch === 'function' && document.getElementById('equipartitionCanvas')) {
-                animInstances.equipartition = new p5(equipartitionSketch, 'equipartitionCanvas');
-            }
-        }, 150); 
-    });
-</script>
+    </script>
 </body>
 </html>
