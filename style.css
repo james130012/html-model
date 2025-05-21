@@ -1,0 +1,205 @@
+/* 基本重置和页面设置 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans SC', sans-serif; /* 清晰的正文 */
+            font-size: 18px; /* 模拟“三号”字体大小，提供良好可读性 */
+            line-height: 1.8;
+            background-color: #f8f9fa; /* 淡雅背景色 */
+            color: #343a40; /* 深灰文字，对比清晰 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 容器样式，使其在A3纸张感觉上居中且有边距 */
+        .container {
+            position: relative; /* Ensures z-index is applied correctly */
+            z-index: 1; /* Above the swan animation canvas */
+            width: 90%;
+            max-width: 1200px; /* 限制最大宽度，类似纸张 */
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #ffffff; /* 白色内容背景 */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            position: relative; /* Ensures z-index is applied correctly */
+            z-index: 1; /* Above the swan animation canvas */
+        }
+
+        #swanAnimationContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; /* Positioned above the body's default static content, but below .container */
+            pointer-events: none; /* Allow clicks to pass through to elements behind it */
+        }
+
+        /* 标题样式 */
+        h1, h2, h3 {
+            font-family: 'ZCOOL KuaiLe', cursive; /* 轻松活泼的标题字体 */
+            color: #007bff; /* 蓝色标题 */
+            margin-bottom: 0.75em;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.8em; /* 大标题 */
+            color: #2a9d8f; /* 青色，更活泼 */
+            border-bottom: 3px solid #2a9d8f;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h2 {
+            font-size: 2.2em;
+            color: #e76f51; /* 橙红色，强调章节 */
+            margin-top: 1.5em;
+        }
+        h3 {
+            font-size: 1.8em;
+            color: #f4a261; /* 暖黄色 */
+        }
+
+        /* 段落和文本样式 */
+        p {
+            margin-bottom: 1.2em;
+            text-align: justify; /* 两端对齐，更整洁 */
+        }
+
+        /* 强调文字 */
+        strong, .highlight {
+            color: #d62828; /* 红色强调 */
+            font-weight: bold;
+        }
+        .concept {
+            font-weight: 500;
+            color: #2a9d8f; /* 青色概念词 */
+            padding: 2px 4px;
+            background-color: #e9f5f4;
+            border-radius: 4px;
+        }
+
+        /* 公式文本样式 */
+        .formula {
+            display: block;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace; /* 等宽字体显示公式 */
+            font-size: 1.2em;
+            padding: 15px;
+            margin: 20px auto;
+            background-color: #e9ecef; /* 淡灰色背景 */
+            border-radius: 8px;
+            color: #495057;
+            max-width: 80%;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        /* 动画容器 */
+        .animation-container {
+            width: 100%;
+            max-width: 600px; /* 动画最大宽度 */
+            height: 400px; /* 固定高度，确保canvas可见 */
+            margin: 20px auto;
+            border: 2px solid #007bff; /* 边框 */
+            border-radius: 8px;
+            overflow: hidden; /* 确保 P5 canvas 不会溢出 */
+            background-color: #f0f8ff; /* 淡蓝色背景 */
+            display: flex; /* 用于居中canvas */
+            justify-content: center;
+            align-items: center;
+        }
+        .animation-container canvas {
+            display: block; /* 移除canvas下方的额外空间 */
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 6px; /* 内部canvas也圆角 */
+        }
+        
+        /* 交互按钮样式 */
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls button, .controls input[type="range"], .controls label {
+            padding: 10px 18px;
+            font-size: 1em;
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #007bff; /* 蓝色按钮 */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .controls button:hover {
+            background-color: #0056b3; /* 深蓝色悬停 */
+            transform: translateY(-2px);
+        }
+        .controls button:active {
+            transform: translateY(1px);
+        }
+        .controls input[type="range"] {
+            vertical-align: middle;
+            cursor: grab;
+        }
+        .controls label {
+            background-color: transparent;
+            color: #343a40;
+            box-shadow: none;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #343a40; /* 深色页脚 */
+            color: #f8f9fa; /*浅色文字*/
+            width: 100%;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px; /* 移动设备上稍小字体 */
+            }
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2.2em;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            .animation-container {
+                height: 300px; /* 移动设备上调整高度 */
+            }
+            .formula {
+                font-size: 1em;
+                max-width: 95%;
+            }
+            .controls button, .controls input[type="range"], .controls label {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+        }
+
+#swanAnimationContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* Above body's default content, but below main container */
+    pointer-events: none; /* Swans should not be interactive */
+}
